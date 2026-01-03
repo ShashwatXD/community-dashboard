@@ -471,21 +471,44 @@ export default function LeaderboardView({
                     />
                   </div>
 
-                  <div className="hidden sm:flex">
-                    <button
-                      type="button"
-                      className="h-9 w-28 px-3 rounded-md bg-[#50B78B] text-white text-sm flex items-center justify-center gap-2"
-                    >
-                      <span>
-                        {sortBy === "points"
-                          ? "Total Points"
-                          : sortBy === "pr_opened"
-                          ? "PR Opened"
-                          : sortBy === "pr_merged"
-                          ? "PR Merged"
-                          : "Issue Opened"}
-                      </span>
-                    </button>
+<div className="hidden md:flex items-center bg-muted/30 p-1 rounded-lg border">
+                    {[
+                      { key: "points", label: "Total Points" },
+                      { key: "pr_merged", label: "PR Merged" },
+                      { key: "pr_opened", label: "PR Opened" },
+                      { key: "issues", label: "Issues" },
+                    ].map((tab) => {
+                      const isActive = sortBy === tab.key;
+                      return (
+                        <button
+                          key={tab.key}
+                          onClick={() => {
+                            setSortBy(tab.key as SortBy);
+                            const params = new URLSearchParams(searchParams.toString());
+                            if (tab.key === "points") {
+                              params.delete("sort");
+                              params.delete("order");
+                            } else {
+                              params.set("sort", tab.key);
+                              params.set("order", "desc");
+                            }
+                            // Reset to page 1 when sort changes
+                            params.delete("page");
+                            setCurrentPage(1);
+                            if (typeof window !== "undefined")
+                              window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+                          }}
+                          className={cn(
+                            "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                            isActive
+                              ? "bg-[#50B78B] text-white shadow-sm"
+                              : "text-muted-foreground hover:text-[#50B78B] hover:bg-[#50B78B]/10"
+                          )}
+                        >
+                          {tab.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
