@@ -492,7 +492,6 @@ export default function LeaderboardView({
                               params.set("sort", tab.key);
                               params.set("order", "desc");
                             }
-                            // Reset to page 1 when sort changes
                             params.delete("page");
                             setCurrentPage(1);
                             if (typeof window !== "undefined")
